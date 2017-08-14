@@ -30,65 +30,19 @@ namespace CCC.EventSourcing.BenutzerAnmeldungService
             return new ReadOnlyCollection<Event>(passendeEvents.ToList());
         }
 
-        //todo: Holeaggregat ist falsch. Man holt hier eine Transformation bzw. macht eine Abfrage
-        public Benutzer HoleBenutzer(string aggregateId)
-        {
-            Benutzer aggregat = null;
-            var events = HoleEvents(aggregateId);
-
-            foreach (var myEvent in events)
-            {
-                if (myEvent.GetType() == typeof(BenutzerRegistriert))
-                {
-
-
-                    ////{
-                    ////aggregat = new Benutzer
-                    ////{
-                    ////    Vorname = ((BenutzerRegistriert)myEvent).Vorname,
-                    ////    Nachname = ((BenutzerRegistriert)myEvent).Nachname,
-                    ////    Benutzername = ((BenutzerRegistriert)myEvent).Benutzername,
-                    ////    Passwort = ((BenutzerRegistriert)myEvent).Passwort
-                    ////};
-                }
-                else if (myEvent.GetType() == typeof(PasswortGeandert))
-                {
-                    ////aggregat.Passwort = ((PasswortGeandert)myEvent).NeuesPasswort;
-                    aggregat.Apply((PasswortGeandert)myEvent);
-                }
-            }
-
-            return aggregat;
-        }
-
         public Benutzer HoleAggregat(string aggregateId)
         {
             //TODO: default-Konstruktion
-            Benutzer aggregat = null;
+            var aggregat = new Benutzer();
 
             var events = HoleEvents(aggregateId);
 
-            foreach (var myEvent in events)
+            if (events.OfType<BenutzerRegistriert>().Any() == false)
             {
-                if (myEvent.GetType() == typeof(BenutzerRegistriert))
-                {
-
-
-                    ////{
-                    ////aggregat = new Benutzer
-                    ////{
-                    ////    Vorname = ((BenutzerRegistriert)myEvent).Vorname,
-                    ////    Nachname = ((BenutzerRegistriert)myEvent).Nachname,
-                    ////    Benutzername = ((BenutzerRegistriert)myEvent).Benutzername,
-                    ////    Passwort = ((BenutzerRegistriert)myEvent).Passwort
-                    ////};
-                }
-                else if (myEvent.GetType() == typeof(PasswortGeandert))
-                {
-                    ////aggregat.Passwort = ((PasswortGeandert)myEvent).NeuesPasswort;
-                    aggregat.Apply((PasswortGeandert)myEvent);
-                }
+                return null;
             }
+
+            aggregat.LoadFromHistory(events);
 
             return aggregat;
         }

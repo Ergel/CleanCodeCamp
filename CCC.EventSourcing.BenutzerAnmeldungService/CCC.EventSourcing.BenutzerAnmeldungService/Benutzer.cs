@@ -15,38 +15,25 @@ namespace CCC.EventSourcing.BenutzerAnmeldungService
         public string Vorname { get; internal set; }
         public string Nachname { get; internal set; }
 
-        public void Apply(BenutzerRegistriert myEvent)
+        public void Replay(BenutzerRegistriert myEvent)
         {
             this.Vorname = myEvent.Vorname;
             this.Nachname = myEvent.Nachname;
             this.Benutzername = myEvent.Benutzername;
             this.Passwort = myEvent.Passwort;
         }
-
-        //todo: Replay anstatt Apply   
-        public void Apply(PasswortGeandert myEvent)
+ 
+        public void Replay(PasswortGeandert myEvent)
         {
             this.Passwort = myEvent.NeuesPasswort;
         }
 
-        public void AktuellenZustandHolen()
+        public void LoadFromHistory(IReadOnlyCollection<Event> events)
         {
-            ////var eventBenutzerRegistriert = alleEvents.OfType<BenutzerRegistriert>().SingleOrDefault();
-
-            ////Benutzername = eventBenutzerRegistriert.Benutzername;
-            ////Passwort = alleEvents.OfType<PasswortGeandert>().Last().NeuesPasswort;
-            ////Vorname = eventBenutzerRegistriert.Vorname;
-            ////Nachname = eventBenutzerRegistriert.Nachname;
-        }
-
-        public void ApplyEvents(IReadOnlyCollection<Event> alleEvents)
-        {
-            var eventBenutzerRegistriert = alleEvents.OfType<BenutzerRegistriert>().SingleOrDefault();
-
-            Benutzername = eventBenutzerRegistriert.Benutzername;
-            Passwort = alleEvents.OfType<PasswortGeandert>().Last().NeuesPasswort;
-            Vorname = eventBenutzerRegistriert.Vorname;
-            Nachname = eventBenutzerRegistriert.Nachname;
+            foreach (dynamic @event in events)
+            {
+                this.Replay(@event);
+            }
         }
     }
 }

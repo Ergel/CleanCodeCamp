@@ -12,22 +12,6 @@
 
         public bool DarfBenutzerAnmelden(string benutzername, string passwort)
         {
-            //var benutzerRegistriertEvent =
-            //    EventStore.HoleEvents<BenutzerRegistriert>(benutzername).FirstOrDefault();
-
-            //if (benutzerRegistriertEvent == null)
-            //{
-            //    return false;
-            //}
-
-            //var letztePasswortGeandertEvent = EventStore.HoleEvents<PasswortGeandert>(benutzername).LastOrDefault();
-
-            //var aktuellesPasswort = benutzerRegistriertEvent.Passwort;
-            //if (letztePasswortGeandertEvent != null)
-            //{
-            //    aktuellesPasswort = letztePasswortGeandertEvent.NeuesPasswort;
-            //}
-
             //TODO:benutzer instanzieren, damit wir das passwort auslesen können -> EventStore.HoleAggregat
             Benutzer benutzer = this.EventStore.HoleAggregat(benutzername);
             if (benutzer == null)
@@ -36,16 +20,6 @@
             }
 
             return benutzer.Passwort == passwort;
-        }
-
-        public object HoleAktuellenZustand(string aggregateId)
-        {
-            var alleEvents = EventStore.HoleEvents(aggregateId);
-
-            var benutzer = new Benutzer();
-            benutzer.ApplyEvents(alleEvents);
-
-            return benutzer;
         }
 
         public void PasswortAendern(string benutzername, string altesPasswort, string neuesPasswort)
